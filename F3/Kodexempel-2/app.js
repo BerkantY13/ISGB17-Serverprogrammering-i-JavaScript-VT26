@@ -21,16 +21,17 @@ const express = require('express');
 
 let app = express();
 
-app.listen(3000, function(){
-    console.log("Servern körs på port 3000");
+app.listen(3000, function() {
+    console.log('Servern körs på port 3000!');
 });
 
 app.use('/diverse', express.static(__dirname + '/static'));
 
+app.get('/', function(request, response){
 
-app.get('/', function(request,response){
-    response.sendFile(__dirname + '/static/html/index.html', function(err){
-        //Om något gick fel ta hand om det här!
-
+    response.sendFile(__dirname + '/static/html/index.html', function(err) {
+        //Om ngt gick fel ta hand om det här!
     });
+
 });
+
