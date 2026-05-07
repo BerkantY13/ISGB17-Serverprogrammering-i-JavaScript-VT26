@@ -48,6 +48,9 @@ app.listen(3000, function() {
     console.log('Servern körs på port 3000!');
 });
 
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
 app.use('/openDir', express.static(__dirname + '/lostFiles'));
 app.use(express.urlencoded( {extended : true} ));
 
@@ -101,7 +104,9 @@ app.post('/', function( request, response) {
         if( (red < 0 || red > 255) || (green < 0 || green > 255) || (blue < 0 || blue > 255) ) {
             throw new Error('Indata ska återfinnas mellan 0 och 255!');
         }
-
+        response.cookie('red', red, {maxAge : 60 * 10000 * 5});
+        response.cookie('green', green, {maxAge : 60 * 10000 * 5});
+        response.cookie('blue', blue, {maxAge : 60 * 10000 * 5});
         fs.readFile(__dirname + '/lostFiles/html/index.html', function(err, data) {
 
             if( err ) {
