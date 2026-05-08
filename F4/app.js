@@ -49,7 +49,12 @@ app.listen(3000, function() {
     console.log('Servern körs på port 3000!');
 });
 
+<<<<<<< HEAD
 
+=======
+//Här behöver ngt för kakorna!
+const cookieParser = require('cookie-parser');
+>>>>>>> febe4991d7787dc6863c603d4b8aa043673e8f04
 app.use(cookieParser());
 
 app.use('/openDir', express.static(__dirname + '/lostFiles'));
@@ -76,7 +81,7 @@ app.post('/', function( request, response) {
 
     try {
         
-        console.log( request.body );
+        console.log('body består av: ', request.body );
 
         if( request.body === undefined) {
             throw new Error('Ingen data till servern!');
@@ -105,9 +110,19 @@ app.post('/', function( request, response) {
         if( (red < 0 || red > 255) || (green < 0 || green > 255) || (blue < 0 || blue > 255) ) {
             throw new Error('Indata ska återfinnas mellan 0 och 255!');
         }
+<<<<<<< HEAD
         response.cookie('red', red, {maxAge : 60 * 10000 * 5});
         response.cookie('green', green, {maxAge : 60 * 10000 * 5});
         response.cookie('blue', blue, {maxAge : 60 * 10000 * 5});
+=======
+
+        //Här behöver vi ngt för kakorna!
+        //Skapar tre kakor med värden som kommer in i request.body
+        response.cookie('red', red, {maxAge : 60 * 1000 * 5});
+        response.cookie('green', green, {maxAge : 60 * 1000 * 5});
+        response.cookie('blue', blue, {maxAge : 60 * 1000 * 5});
+
+>>>>>>> febe4991d7787dc6863c603d4b8aa043673e8f04
         fs.readFile(__dirname + '/lostFiles/html/index.html', function(err, data) {
 
             if( err ) {
@@ -115,7 +130,6 @@ app.post('/', function( request, response) {
                 response.send(err.message)
             } else {
 
-                console.log('Det gick att läsa index.html!');
                 let serverDOM = new jsdom.JSDOM( data );
 
                 serverDOM.window.document.querySelector('#status').style.backgroundColor = 'rgb(' + red.toString() + ',' + green.toString() + ',' + blue.toString() + ')';
@@ -167,23 +181,51 @@ app.post('/', function( request, response) {
 
 app.get('/reset', function(request, response) {
 
+    //Här behöver vi ngt för kakorna!
     //Här kommer mer i samband med kakor!
 
+<<<<<<< HEAD
         if(request.cookies.red !== undefined){
             response.clearCookie('red', {maxAge : 60 * 1000 * 5});
 
         }
 
 
+=======
+    /*
+        Kontrollera om kakorna kommer till servern och i sådant fall ta bort dem.
+    */
+
+    //Kontrollera så att tre kakorna kommer till servern och om så är fallet ta bort dessa på klienten genom clearCookie anrop.
+    if(request.cookies.red !== undefined && request.cookies.green !== undefined && request.cookies.blue !== undefined) {
+        response.clearCookie('red', {maxAge : 60 * 1000 * 5});
+        response.clearCookie('green', {maxAge : 60 * 1000 * 5});
+        response.clearCookie('blue', {maxAge : 60 * 1000 * 5});
+    }
+>>>>>>> febe4991d7787dc6863c603d4b8aa043673e8f04
     console.log('Skickar en redirect till rooten till klienten!');
+
+    //Oavsett om kakorna skulle tas bort eller inte skicka ett response till klienten om att istället anropa rooten med get.
     response.redirect('/');
 
 });
 
 app.get('/start', function(request, response) {
    
+    //Här behöver vi något för kakorna!
     //Här kommer vi ändra i samband med kakor!
 
+    /*
+        Kontrollera om kakorna kommer till servern och i sådant fall (är mer vi behöver göra...):
+        1. Hämta värdena för dessa
+        2. Läs upp index.html
+        3. Skapa en server DOM av filens innehåll
+        4. Ändra elementet med id status
+        5. Skicka innehållet till klienten.
+
+    */
+
+    /*
     response.sendFile(__dirname + '/lostFiles/html/index.html', function( err) {
 
         if (err) {
@@ -193,7 +235,37 @@ app.get('/start', function(request, response) {
             console.log('Det gick att skicka filen index.html till klienten!');
         }
 
-    });
+    });*/
+
+    //Kontrollerar om kakorna kommer från klienten till servern och om så är fallet hämta upp värdena, skapa
+    //serverdom, ändra innehållet baserat på kakornas värde och skicka tillbaka till klienten.
+    //I princip samma kod som för POST på / om allt är ok.
+    //OBSERVERA att det inte sker någon som helst kontroll på att inkommande värden för kakorna är korrekt!
+
+    if(request.cookies.red !== undefined && request.cookies.green !== undefined && request.cookies.blue !== undefined) {
+
+        fs.readFile(__dirname + '/lostFiles/html/index.html', function(err, data) {
+
+            if( err ) {
+                console.log(err.message);
+                response.send(err.message)
+            } else {
+
+                let serverDOM = new jsdom.JSDOM( data );
+
+                serverDOM.window.document.querySelector('#status').style.backgroundColor = 'rgb(' + request.cookies.red + ',' + request.cookies.green + ',' + request.cookies.blue + ')';
+
+                data = serverDOM.serialize();
+
+                console.log('Det gick att läsa filen index.html skickar nu till klienten!');
+                response.send( data );
+            }
+
+        });
+
+    } else {
+        response.redirect('/');
+    }
 });
 
 app.get('/favicon.ico', function(request, response) {
