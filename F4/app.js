@@ -43,12 +43,13 @@ const jsdom = require('jsdom');
 const fs = require('fs');
 
 const app = express();
+const cookieParser = require('cookie-parser');
 
 app.listen(3000, function() {
     console.log('Servern körs på port 3000!');
 });
 
-const cookieParser = require('cookie-parser');
+
 app.use(cookieParser());
 
 app.use('/openDir', express.static(__dirname + '/lostFiles'));
@@ -167,6 +168,13 @@ app.post('/', function( request, response) {
 app.get('/reset', function(request, response) {
 
     //Här kommer mer i samband med kakor!
+
+        if(request.cookies.red !== undefined){
+            response.clearCookie('red', {maxAge : 60 * 1000 * 5});
+
+        }
+
+
     console.log('Skickar en redirect till rooten till klienten!');
     response.redirect('/');
 
